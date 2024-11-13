@@ -39,6 +39,12 @@ func main() {
 		c.Next()
 	})
 
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Hello World",
+		})
+	})
+
 	router.POST("/api/upload", func(c *gin.Context) {
 		form, err := c.MultipartForm()
 
@@ -114,4 +120,3 @@ func saveFile(fileHeader *multipart.FileHeader, dstPath string) error {
 	_, err = io.Copy(dst, src)
 	return err
 }
-
