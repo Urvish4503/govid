@@ -19,5 +19,11 @@ func init() {
 }
 
 func main() {
-	config.DB.AutoMigrate(&models.User{})
+	err := config.DB.AutoMigrate(&models.User{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Migration completed")
 }
