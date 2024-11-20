@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"github.com/Urvish4503/govid/internal/utils"
 	"strings"
 
 	"github.com/Urvish4503/govid/internal/models"
@@ -20,7 +21,7 @@ func NewUserService(db *gorm.DB) *UserService {
 }
 
 func (s *UserService) RegisterUser(userReq *models.UserRequest) (*models.User, error) {
-	if err := validateUserRequest(userReq); err != nil {
+	if err := utils.ValidateUserRequest(userReq); err != nil {
 		return nil, err
 	}
 
@@ -28,19 +29,19 @@ func (s *UserService) RegisterUser(userReq *models.UserRequest) (*models.User, e
 
 	result := s.db.Where("email = ?", userReq.Email).First(&existingUser)
 
-	// FIXME: here if email is not existing then it is printing error
 	if result.Error == nil {
 		return nil, errors.New("email already registered")
 	} else if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	} else {
 		return nil, result.Error
 	}
 
-	salt, err := generateSalt(16)
+	salt, err := utils.GenerateSalt(16)
 	if err != nil {
 		return nil, errors.New("failed to generate salt")
 	}
 
-	hashedPassword, err := hashPassword(userReq.Password, salt)
+	hashedPassword, err := utils.HashPassword(userReq.Password, salt)
 
 	if err != nil {
 		return nil, err
@@ -60,3 +61,6 @@ func (s *UserService) RegisterUser(userReq *models.UserRequest) (*models.User, e
 
 	return user, nil
 }
+
+// TODO: later implement GetUser
+func (s *UserService) GetUser() {}

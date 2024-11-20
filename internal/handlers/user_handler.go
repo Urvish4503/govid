@@ -39,3 +39,9 @@ func (h *UserHandler) RegisterUser(c *fiber.Ctx) error {
 		"data":    user,
 	})
 }
+
+// TODO: Implement GetUser handler
+func (h *UserHandler) GetUser(c *fiber.Ctx) error {
+
+	return nil
+}

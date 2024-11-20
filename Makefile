@@ -1,4 +1,3 @@
-# Binary name
 BINARY_NAME=govid
 
 # Go related variables
@@ -21,11 +20,6 @@ test: ## Run tests
 	@echo "Running tests..."
 	@go test -v ./internal/...
 
-coverage: ## Generate test coverage report
-	@echo "Generating coverage report..."
-	@go test -coverprofile=coverage.out ./internal/...
-	@go tool cover -html=coverage.out
-
 lint: ## Run golangci-lint
 	@echo "Running linter..."
 	@golangci-lint run ./...
@@ -44,7 +38,7 @@ migrate: ## Run database migrations
 	@go run migrate/migrate.go
 
 dev: ## Run with hot reload
-	@go run cmd/govid/main.go
+	@air
 
 # Install development tools
 setup: ## Install required tools

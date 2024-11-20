@@ -30,4 +30,9 @@
   - [ ] Implement middleware for validating API keys in requests
   - [ ] Set up API key permissions to restrict or allow actions per user
 
+### Make flowchar of functions
+
+- [ ] All user functions
+- [ ] All file upload functions
+
 ---
