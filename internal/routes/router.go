@@ -15,8 +15,19 @@ func SetupPingRouter(app *fiber.App) {
 	})
 }
 
-func SetupUserRouter(app *fiber.App, handlers *handlers.UserHandler) {
-	userRouter := app.Group("/user")
+func SetupAuthRouter(app *fiber.App, handlers *handlers.AuthHandler) {
+	authRouter := app.Group("/auth")
 
-	userRouter.Post("/register", handlers.RegisterUser)
+	authRouter.Post("/register", handlers.Register)
+	authRouter.Post("/login", handlers.Login)
+
+}
+
+func SetupUserRouter(app *fiber.App, handlers *handlers.UserHandler) {
+	// userRouter := app.Group("/user")
+
+	// userRouter.Get("/:id", handlers.GetUser)
+	// userRouter.Get("/", handlers.GetUsers)
+	// userRouter.Put("/:id", handlers.UpdateUser)
+	// userRouter.Delete("/:id", handlers.DeleteUser)
 }

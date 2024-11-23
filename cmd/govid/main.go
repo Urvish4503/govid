@@ -15,14 +15,17 @@ func init() {
 }
 
 func main() {
-	userService := services.NewUserService(config.DB)
-	userHandler := handlers.NewUserHandler(userService)
+	// userService := services.NewUserService(config.DB)
+	// userHandler := handlers.NewUserHandler(userService)
+
+	authService := services.NewAuthService(config.DB)
+	authHandler := handlers.NewAuthHandler(authService)
 
 	app := fiber.New()
 
 	routes.SetupPingRouter(app)
 
-	routes.SetupUserRouter(app, userHandler)
+	routes.SetupAuthRouter(app, authHandler)
 
 	if err := app.Listen(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)

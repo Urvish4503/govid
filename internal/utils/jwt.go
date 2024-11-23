@@ -7,7 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtSecret = os.Getenv("JWT_SECRET")
+var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateJWT(email string, username string) (string, error) {
 
@@ -19,6 +19,7 @@ func GenerateJWT(email string, username string) (string, error) {
 		})
 
 	tokenString, err := token.SignedString(jwtSecret)
+
 	if err != nil {
 		return "", err
 	}

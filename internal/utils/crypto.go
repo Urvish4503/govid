@@ -1,26 +1,14 @@
 package utils
 
 import (
-	"crypto/rand"
-	"crypto/subtle"
-	"encoding/base64"
 	"errors"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GenerateSalt creates a random salt
-func GenerateSalt(length int) (string, error) {
-	bytes := make([]byte, length)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(bytes), nil
-}
-
 // HashPassword combines password with salt and hashes
-func HashPassword(password, salt string) (string, error) {
-	saltedPassword := password + salt
+func HashPassword(password string) (string, error) {
+	saltedPassword := password
 
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(saltedPassword), bcrypt.DefaultCost)
 	if err != nil {
@@ -31,13 +19,10 @@ func HashPassword(password, salt string) (string, error) {
 }
 
 // Validate password
-func ValidatePassword(providedPlainPassword, hashedPassword, salt string) bool {
+func ValidatePassword(providedPlainPassword, hashedPassword string) bool {
 
-	hashOfProvidedPassword, err := HashPassword(providedPlainPassword, salt)
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(providedPlainPassword))
 
-	if err != nil {
-		return false
-	}
+	return err == nil
 
-	return subtle.ConstantTimeCompare([]byte(hashOfProvidedPassword), []byte(hashedPassword)) == 1
 }

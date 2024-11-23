@@ -8,7 +8,8 @@
 
 - [ ] **Setup User Functions**
   - [x] Implement **Register** function for user signup
-  - [ ] Implement **Login** function for user authentication
+  - [x] Implement **Login** function for user authentication
+  - [ ] Implement **Get UserProfile** function for removing a user
   - [ ] Implement **Delete User** function for removing a user
   - [ ] Implement **Edit User** function for updating user details
 

@@ -39,10 +39,3 @@ migrate: ## Run database migrations
 
 dev: ## Run with hot reload
 	@air
-
-# Install development tools
-setup: ## Install required tools
-	@echo "Installing development tools..."
-	@if [ ! -f "./bin/golangci-lint" ]; then \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin v1.55.2; \
-	fi

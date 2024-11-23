@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"github.com/Urvish4503/govid/internal/models"
 	"github.com/Urvish4503/govid/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
@@ -17,27 +16,7 @@ func NewUserHandler(userService *services.UserService) *UserHandler {
 }
 
 func (h *UserHandler) RegisterUser(c *fiber.Ctx) error {
-	var userReq models.UserRequest
-
-	if err := c.BodyParser(&userReq); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request",
-		})
-	}
-
-	user, err := h.userService.RegisterUser(&userReq)
-
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Failed to register user",
-			"error":   err.Error(),
-		})
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "User registered successfully",
-		"data":    user,
-	})
+	return nil
 }
 
 // TODO: Implement GetUser handler
