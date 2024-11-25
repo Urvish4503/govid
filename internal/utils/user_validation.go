@@ -8,7 +8,7 @@ import (
 	"github.com/Urvish4503/govid/internal/models"
 )
 
-func ValidateUserRequest(user *models.UserRequest) error {
+func ValidateUserRequest(user *models.RegisterRequest) error {
 	// Validate name
 	if strings.TrimSpace(user.Name) == "" {
 		return errors.New("name is required")

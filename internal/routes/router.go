@@ -24,10 +24,9 @@ func SetupAuthRouter(app *fiber.App, handlers *handlers.AuthHandler) {
 }
 
 func SetupUserRouter(app *fiber.App, handlers *handlers.UserHandler) {
-	// userRouter := app.Group("/user")
+	userRouter := app.Group("/user")
 
-	// userRouter.Get("/:id", handlers.GetUser)
-	// userRouter.Get("/", handlers.GetUsers)
-	// userRouter.Put("/:id", handlers.UpdateUser)
-	// userRouter.Delete("/:id", handlers.DeleteUser)
+	userRouter.Get("/", handlers.GetUser)
+	userRouter.Put("/", handlers.UpdateUser)
+	userRouter.Delete("/", handlers.DeleteUser)
 }

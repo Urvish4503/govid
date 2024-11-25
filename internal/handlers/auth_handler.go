@@ -1,28 +1,39 @@
 package handlers
 
 import (
+	"time"
+
 	"github.com/Urvish4503/govid/internal/models"
 	"github.com/Urvish4503/govid/internal/services"
 	"github.com/gofiber/fiber/v2"
 )
 
-type AuthHandler struct {
-	authService *services.AuthService
+type AuthHandlerInterface interface {
+	Register(c *fiber.Ctx) error
+	Login(c *fiber.Ctx) error
 }
 
-func NewAuthHandler(authService *services.AuthService) *AuthHandler {
-	return &AuthHandler{authService: authService}
+type AuthHandler struct {
+	authService services.AuthService
+}
+
+func NewAuthHandler(authService services.AuthService) *AuthHandler {
+	return &AuthHandler{
+		authService: authService,
+	}
 }
 
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
-	var userReq models.UserRequest
+	var userReq models.RegisterRequest
 
+	// Parse the request body
 	if err := c.BodyParser(&userReq); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request",
 		})
 	}
 
+	// Register the user
 	user, err := h.authService.Register(&userReq)
 
 	if err != nil {
@@ -47,6 +58,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
+	// Generating JWT token
 	token, err := h.authService.Login(loginData.Email, loginData.Password)
 
 	if err != nil {
@@ -56,8 +68,16 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		})
 	}
 
+	c.Cookie(&fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "None",
+	})
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Login successful",
-		"token":   token,
 	})
 }

@@ -2,43 +2,53 @@ package services
 
 import (
 	"errors"
-	"fmt"
-	"strings"
-
 	"github.com/Urvish4503/govid/internal/models"
+	"github.com/Urvish4503/govid/internal/repository"
 	"github.com/Urvish4503/govid/internal/utils"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
+	"strings"
 )
 
+// AuthService interface defines the contract for authentication operations
+type AuthServiceInterface interface {
+	Register(request *models.RegisterRequest) (*models.User, error)
+	Login(email, password string) (string, error)
+}
+
+// UserAuthService implements AuthService interface
 type AuthService struct {
-	DB *gorm.DB
+	userRepo repository.UserRepository
 }
 
-func NewAuthService(db *gorm.DB) *AuthService {
-	return &AuthService{DB: db}
+// NewAuthService creates a new instance of AuthService
+func NewAuthService(userRepo repository.UserRepository) AuthServiceInterface {
+	return &AuthService{
+		userRepo: userRepo,
+	}
 }
 
-func (s *AuthService) Register(userReq *models.UserRequest) (*models.User, error) {
-
+// Register handles user registration
+func (s *AuthService) Register(userReq *models.RegisterRequest) (*models.User, error) {
 	if err := utils.ValidateUserRequest(userReq); err != nil {
 		return nil, err
 	}
 
-	var existingUser models.User
-
-	result := s.DB.Where("email = ?", userReq.Email).First(&existingUser)
-
-	if result.Error == nil {
+	// Check if email already exists
+	existingUser, err := s.userRepo.GetUser(userReq.Email)
+	if err == nil && existingUser != nil {
 		return nil, errors.New("email already registered")
 	}
+	if err != nil && !errors.Is(err, repository.ErrUserNotFound) {
+		return nil, err
+	}
 
+	// Hash password
 	hashedPassword, err := utils.HashPassword(userReq.Password)
-
 	if err != nil {
 		return nil, err
 	}
 
+	// Create new user
 	user := &models.User{
 		ID:       uuid.New(),
 		Name:     userReq.Name,
@@ -46,36 +56,45 @@ func (s *AuthService) Register(userReq *models.UserRequest) (*models.User, error
 		Password: hashedPassword,
 	}
 
-	if err := s.DB.Create(user).Error; err != nil {
+	// Save user using repository
+	createdUser, err := s.userRepo.CreateUser(user)
+	if err != nil {
 		return nil, errors.New("failed to create user")
 	}
 
-	return user, nil
+	return createdUser, nil
 }
 
+// Login handles user authentication
 func (s *AuthService) Login(email, password string) (string, error) {
-	var user models.User
+	// Get user by email
+	user, err := s.userRepo.GetUser(email)
 
-	if err := s.DB.Where("email = ?", email).First(&user).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return "", errors.New("invalid email")
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			return "", ErrInvalidCredentials
 		}
 		return "", err
 	}
 
-	fmt.Println(user)
-
-	hashedPassword := user.Password
-
-	if !utils.ValidatePassword(password, hashedPassword) {
+	// Validate password
+	if !utils.ValidatePassword(password, user.Password) {
 		return "", errors.New("invalid password")
 	}
 
+	// Generate JWT token
 	token, err := utils.GenerateJWT(user.Email, user.Name)
-
 	if err != nil {
-		return "", errors.New("failed to generate token")
+		return "", ErrTokenGeneration
 	}
 
 	return token, nil
 }
+
+// Common errors
+var (
+	ErrInvalidCredentials = errors.New("invalid email or password")
+	ErrEmailExists        = errors.New("email already registered")
+	ErrTokenGeneration    = errors.New("failed to generate token")
+)
+
