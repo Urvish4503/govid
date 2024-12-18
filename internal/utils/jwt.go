@@ -46,4 +46,29 @@ func GenerateJWT(email string, username string) (string, error) {
 }
 
 func VerifyJWT(tokenString string) (*Claims, error) {
+	// Parse the token
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the token is valid
+	if !token.Valid {
+		return nil, ErrInvalidToken
+	}
+
+	claims, ok := token.Claims.(*Claims)
+	if !ok {
+		return nil, ErrInvalidToken
+	}
+
+	// Check if the token has expired
+	if time.Now().After(claims.ExpiresAt.Time) {
+		return nil, ErrExpiredToken
+	}
+
+	return claims, nil
 }

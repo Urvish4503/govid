@@ -30,7 +30,7 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 		})
 	}
 
-	user, err := h.userService.GetUser(token)
+	// user, err := h.userService.GetUser(token)
 
 	return nil
 }

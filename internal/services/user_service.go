@@ -21,10 +21,8 @@ func NewUserService(userRepo repository.UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) GetUser(jwt string) (*models.User, error) {
+func (s *UserService) GetUser(email string) (*models.User, error) {
 	// TODO:
-	email := "later"
-
 	user, err := s.userRepo.GetUser(email)
 
 	if err != nil {

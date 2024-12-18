@@ -27,6 +27,7 @@ func main() {
 	authService := services.NewAuthService(userRepo)
 	authHandler := handlers.NewAuthHandler(authService)
 
+
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{

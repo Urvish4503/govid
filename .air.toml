@@ -1,10 +1,39 @@
-root = "."
-tmp_dir = "tmp"
+# Root Configuration
+root = "."                                  # Project root directory
+tmp_dir = "tmp"                             # Temporary directory for build artifacts
 
 [build]
-cmd = "go build -o ./tmp/main ./cmd/govid/main.go"
-bin = "./tmp/main"
-full_bin = "./tmp/main"
-watch = ["cmd", "internal"]
-exclude_regex = ["_test.go"]
-exclude_dir = ["tmp", "uploads", ".git"]
+  # Build Process Configuration
+  cmd = "go build -o ./bin/govid ./cmd/govid/main.go"  # Compilation command
+  bin = "./bin/air"                         # Output binary path
+  full_bin = "./bin/govid"                    # Full path to the compiled binary
+  
+  # Refined Watching Mechanism
+  watch = [
+    "internal/",                            # Watch internal package modifications
+    "cmd/",                                 # Monitor command directory
+    "*.go",                                 # Track all Go source files
+    "go.mod",                               # Observe dependency changes
+    "go.sum"                                # Track exact dependency versions
+  ]
+  
+  # Exclude Patterns
+  exclude_regex = [
+    "(_test\\.go|\\.git|_build|bin|vendor)", # Ignore test, VCS, build, and dependency directories
+    "\\.air\\.toml"                         # Ignore air configuration itself
+  ]
+  
+  # Delay Configuration
+  delay = 1000                              # Milliseconds between rebuild attempts
+  stop_on_error = true                      # Halt on compilation errors
+
+[log]
+  # Logging Configuration
+  level = "info"                            # Verbosity level for build process
+  time = true                               # Include timestamp in logs
+  color = true                              # Colorized output for readability
+
+[misc]
+  # Miscellaneous Development Configurations
+  clear_screen = true                       # Clear terminal between rebuilds
+  clean_on_exit = true                      # Remove temporary artifacts on exit

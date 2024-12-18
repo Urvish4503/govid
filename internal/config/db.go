@@ -28,4 +28,8 @@ func InitDB() {
 		log.Fatal("Error connecting to database")
 	}
 
+	if err == nil {
+		log.Println("Connected to database")
+	}
+
 }

@@ -1,6 +1,7 @@
 uploads/
 .env
 
+.idea
 build
 bin
 tmp

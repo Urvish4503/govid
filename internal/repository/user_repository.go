@@ -26,7 +26,7 @@ var (
 	ErrEmailExists  = errors.New("email already exists")
 )
 
-func NewUserRepository(db *gorm.DB) UserRepository {
+func NewUserRepository(db *gorm.DB) *PostgresUserRepository {
 	return &PostgresUserRepository{
 		db: db,
 	}
@@ -38,6 +38,7 @@ func (r *PostgresUserRepository) CreateUser(user *models.User) (*models.User, er
 	if err == nil && existingUser != nil {
 		return nil, ErrEmailExists
 	}
+
 	if err != nil && !errors.Is(err, ErrUserNotFound) {
 		return nil, err // Return any other unexpected error
 	}
@@ -52,7 +53,7 @@ func (r *PostgresUserRepository) CreateUser(user *models.User) (*models.User, er
 func (r *PostgresUserRepository) GetUser(email string) (*models.User, error) {
 	user := new(models.User)
 
-	result := r.db.Where("email = ?", email).Find(&user)
+	result := r.db.Where("email = ?", email).First(&user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {

@@ -2,11 +2,12 @@ package services
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/Urvish4503/govid/internal/models"
 	"github.com/Urvish4503/govid/internal/repository"
 	"github.com/Urvish4503/govid/internal/utils"
 	"github.com/google/uuid"
-	"strings"
 )
 
 // AuthService interface defines the contract for authentication operations
@@ -21,7 +22,7 @@ type AuthService struct {
 }
 
 // NewAuthService creates a new instance of AuthService
-func NewAuthService(userRepo repository.UserRepository) AuthServiceInterface {
+func NewAuthService(userRepo repository.UserRepository) *AuthService {
 	return &AuthService{
 		userRepo: userRepo,
 	}
@@ -97,4 +98,3 @@ var (
 	ErrEmailExists        = errors.New("email already registered")
 	ErrTokenGeneration    = errors.New("failed to generate token")
 )
-
